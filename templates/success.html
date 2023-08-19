@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Registration Success
+{% endblock %}
+
+{% block styles %}
+<style>
+    .success-container {
+        text-align: center;
+        margin-top: 100px;
+    }
+
+    .success-message {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .success-meme {
+        width: 500px;
+        height: auto;
+    }
+
+    /* Keyframes for bounce animation */
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="success-container">
+    <div class="success-message">
+        <p><h1>Registration successful! You can now log in.</h1></p>
+    </div>
+    <img class="success-meme" src="https://cdn.lowgif.com/full/f340c49b7c883b84-.gif" alt="Success Kid Meme">
+</div>
+<script>
+    // Bounce animation for the meme
+    const successMeme = document.querySelector(".success-meme");
+    successMeme.style.animation = "bounce 3s infinite";
+</script>
+{% endblock %}

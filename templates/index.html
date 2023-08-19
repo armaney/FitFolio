@@ -1,0 +1,244 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block styles %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #292b2c; /* Dark background color */
+        color: #ffffff; /* Light text color */
+        margin: 0;
+        padding: 0;
+    }
+
+    .header {
+        background-color: #1f2121; /* Dark header background color */
+        color: #ffffff;
+        padding: 10px;
+        text-align: center;
+        z-index: 1;
+    }
+
+    .fitness-container {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        flex-wrap: wrap;
+        margin-top: 20px; /* Adjust this margin if needed */
+}
+
+    .chart-box {
+        max-width:400px;
+        margin: 20px;
+        padding: 50px;
+        background-color: #333333; /* Darker chart background color */
+        border-radius: 20px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-info {
+        padding: 20px;
+        background-color: #333333; /* Darker user info background color */
+        border-radius: 10px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    .user-info h2 {
+        color: #ffffff;
+        border-bottom: 2px solid #ffffff;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    .user-info p {
+        margin: 10px 0;
+    }
+
+    .fitness-form {
+        padding: 20px;
+        background-color: #333333; /* Darker form background color */
+        border-radius: 10px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    .fitness-form label {
+        color: #ffffff;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .fitness-form input[type="number"],
+    .fitness-form input[type="date"],
+    .fitness-form button {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        width: 30%;
+        background-color: #1f2121; /* Dark button background color */
+        color: #ffffff;
+        cursor: pointer;
+    }
+    .main-content {
+    margin-top: 60px; /* Adjust this value as needed to create the desired spacing between the header and the content */
+    /* OR */
+    /* padding-top: 60px; */
+}
+
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="main-content">
+<div class="header">
+    <h1>Welcome, {{ name }}!</h1>
+    <p>Dashboard</p>
+</div>
+
+<div class="fitness-container">
+    <div class="chart-box">
+        <h2>BMI Comparison</h2>
+        <canvas id="bmiChart" height="150"></canvas>
+    </div>
+    <div class="chart-box">
+        <h2>Personal Records</h2>
+        <canvas id="personalRecordsChart" height="150"></canvas>
+    </div>
+    <div class="chart-box">
+        <h2>BMI Level Gauge</h2>
+        <div id="bmiGauge" style="width:300px; height:150px"></div>
+    </div>
+</div>
+
+
+<div class="user-info">
+    <h2>Your Information</h2>
+    <p>Your Age: {{ user_data.age }}</p>
+    <p>Your Current BMI: {{ '%.2f'|format(user_data.bmi) }}</p>
+    <p>Your Health Condition: {% if user_data.bmi < 18.5 %}Underweight{% elif user_data.bmi >= 18.5 and user_data.bmi < 24.9 %}Normal{% elif user_data.bmi >= 25 and user_data.bmi < 29.9 %}Overweight{% else %}Obese{% endif %}</p>
+    <p>Your Target BMI: {% if user_data.target_bmi is not none %}{{ '%.2f'|format(user_data.target_bmi) }}{% else %}0{% endif %}</p>
+    <p>Your Target Weight: {% if user_data.target_weight is not none %}{{ user_data.target_weight }} kg{% else %}0 kg{% endif %}</p>
+    <p>Your Target Date: {% if user_data.target_date is not none %}{{ user_data.target_date }}{% else %}N/A{% endif %}</p>
+    <p>You can update your details in the profile page!</p>
+</div>
+
+<div class="fitness-form">
+    <h2>Set Target Weight</h2>
+    <form action="/set_target" method="post">
+        <label for="target_weight">Enter Target Weight (kg):</label>
+        <input type="number" step="0.01" name="target_weight" required>
+
+        <label for="target_date">Enter Target Date:</label>
+        <input type="date" name="target_date" required>
+
+        <button type="submit">Set Target BMI</button>
+    </form>
+</div>
+</div>
+
+
+
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Raphael must be included before justgage -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.2.9/justgage.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the canvas element and create a chart context
+        const ctx = document.getElementById('bmiChart').getContext('2d');
+
+        // Fetch user data from the backend API
+        fetch('/get_user_data')
+            .then(response => response.json())
+            .then(data => {
+                // Define chart data
+                const chartData = {
+                    labels: ['Current BMI', 'Target BMI'],
+                    datasets: [{
+                        label: 'BMI',
+                        data: [data.bmi, data.target_bmi],
+                        backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                        borderWidth: 1
+                    }]
+                };
+
+                // Define chart options
+                const options = {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                };
+
+                // Create the chart
+                const bmiChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: options
+                });
+            });
+
+        // Fetch user data from the backend API
+        fetch('/get_user_data')
+            .then(response => response.json())
+            .then(data => {
+                // Create the gauge chart
+                const bmiGauge = new JustGage({
+                    id: "bmiGauge",
+                    value: data.bmi,
+                    min: 0,
+                    max: 40,
+                    title: "BMI",
+                    label: "Your BMI",
+                    levelColors: ["#ff0000", "#f9c802", "#a9d70b", "#ff0000"]
+                });
+            });
+    });
+
+
+    fetch('/get_user_data')
+        .then(response => response.json())
+        .then(data => {
+            // Personal Records Chart
+            const personalRecordsChartCanvas = document.getElementById('personalRecordsChart').getContext('2d');
+
+            const personalRecordsChartData = {
+                labels: ['Bench Press', 'Squats', 'Deadlifts'],
+                datasets: [{
+                    label: 'Personal Records',
+                    data: [data.bench_press_pr, data.squats_pr, data.deadlifts_pr],
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            };
+
+            const personalRecordsChartOptions = {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            };
+
+            const personalRecordsChart = new Chart(personalRecordsChartCanvas, {
+                type: 'bar',
+                data: personalRecordsChartData,
+                options: personalRecordsChartOptions
+            });
+        });
+
+</script>
+
+
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block styles %}
+    <style>
+        /* Apply specific styles for the login page */
+        .login-container {
+            background-image: url('https://www.workoutreviews.org/wp-content/uploads/2022/01/Jump-Rope-Skills-scaled-1.jpg'); /* Path to your background image */
+            background-size: cover;
+            background-position: center;
+            padding: 950px 1px 1px; /* Adjust the top and bottom padding to control the image position */
+            position: relative; /* Add relative positioning to the container */
+        }
+
+        .dark-mode {
+            background-color: rgba(34, 34, 34, 0.8); /* Semi-transparent dark background */
+            color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Add specific styles for the login form */
+        .login-form {
+            margin-top: -650px; /* Adjust this value to control the form's position within the container */
+        }
+
+
+        .text-light {
+            font-size: 24px; /* Adjust the font size as needed */
+            margin-top: -150px;
+        }
+        footer {
+            background-color: #333; /* Background color */
+            color: white; /* Text color */
+            text-align: center; /* Center the text */
+            padding: 10px; /* Add padding for spacing */
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+
+
+    <div class="login-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <form class="dark-mode login-form" action="/login" method="post">
+                        <div class="mb-3">
+                            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" type="text">
+                        </div>
+                        <div class="mb-3">
+                            <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password">
+                        </div>
+                        <div class="text-center mt-3">
+                            <button class="btn btn-primary" type="submit">Log In</button>
+                            <span class="mx-2 text-light">or</span>
+                            <a href="{{ url_for('register') }}" class="btn btn-secondary">New User</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <p class="text-light">Start Your Fitness Journey with FitFolio!</p>
+        </div>
+    </div>
+    <footer>
+        This website was designed by Arman
+    </footer>
+{% endblock %}

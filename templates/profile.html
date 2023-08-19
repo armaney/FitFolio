@@ -1,0 +1,183 @@
+{% extends "layout.html" %}
+
+{% block title %}Profile - FitFolio{% endblock %}
+
+{% block styles %}
+<style>
+    body {
+        background-color: #121212;
+        color: white;
+        font-family: 'MuseoModerno', sans-serif;
+    }
+
+    .profile-container {
+        padding: 40px;
+        text-align: center;
+    }
+    .profile-card form {
+        background-color: black; /* Set the form's background to black */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .profile-card {
+        background-color: #1e1e1e;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .info-label {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .info-value {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .personal-records {
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    .exercise-record {
+        margin-bottom: 10px;
+    }
+    .flash-messages {
+        color: green;
+        list-style: none;
+    }
+    .profile-card form input[type="text"],
+    .profile-card form input[type="number"],
+    .profile-card form button {
+        background-color: #1e1e1e; /* Set input fields and buttons background to dark gray */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        width: 50%;
+        box-sizing: border-box;
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flash-messages">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<div class="profile-container">
+    <div class="profile-card">
+        <h2>Your Profile</h2>
+        <div class="info-label">Username:</div>
+        <div class="info-value">{{ username }}</div>
+        <div class="info-label">Height:</div>
+        <div class="info-value">{{ user_data["height"] }} cm</div>
+        <div class="info-label">Weight:</div>
+        <div class="info-value">{{ user_data["weight"] }} kg</div>
+        <div class="info-label">Current BMI:</div>
+        <div class="info-value">{{ "%0.2f"|format(user_data["bmi"]) }}</div>
+        <div class="info-label">Target BMI:</div>
+        <div class="info-value">
+            {% if user_data["target_bmi"] is not none %}
+                {{ "%0.2f"|format(user_data["target_bmi"]) }}
+            {% else %}
+                0
+            {% endif %}
+        </div>
+        <!-- Add this form within the .profile-card div -->
+        <div class="personal-records">
+            <h3>Personal Records</h3>
+            <div class="exercise-record">Bench Press: {{ user_data["bench_press_pr"] }} kg</div>
+            <div class="exercise-record">Squats: {{ user_data["squats_pr"] }} kg</div>
+            <div class="exercise-record">Deadlifts: {{ user_data["deadlifts_pr"] }} kg</div>
+            <!-- Add more exercise records here -->
+        </div>
+        <div class="personal-records-message">
+            {% if user_data["bench_press_pr"] is not none %}
+                <p>Your Bench Press PR of {{ user_data["bench_press_pr"] }} kg is better than
+                    {% if user_data["bench_press_pr"] >= 100 %}
+                        ≈80%
+                    {% elif user_data["bench_press_pr"] >= 80 %}
+                        ≈50%
+                    {% else %}
+                        ≈10%
+                    {% endif %}
+                    of people in the world!</p>
+            {% endif %}
+
+            <!-- Add similar messages for squats and deadlifts -->
+            {% if user_data["squats_pr"] is not none %}
+                <p>Your Squats PR of {{ user_data["squats_pr"] }} kg is better than
+                    {% if user_data["squats_pr"] >= 200 %}
+                        ≈99%
+                    {% elif user_data["squats_pr"] >= 100 %}
+                        ≈80%
+                    {% else %}
+                        ≈5%
+                    {% endif %}
+                    of people in the world!</p>
+            {% endif %}
+
+            {% if user_data["deadlifts_pr"] is not none %}
+                <p>Your Deadlifts PR of {{ user_data["deadlifts_pr"] }} kg is better than
+                    {% if user_data["deadlifts_pr"] >= 200 %}
+                        ≈99%
+                    {% elif user_data["deadlifts_pr"] >= 100 %}
+                        ≈80%
+                    {% else %}
+                        ≈15%
+                    {% endif %}
+                    of people in the world!</p>
+            {% endif %}
+        </div>
+
+        <form method="post" action="/update_profile">
+            <h3>Edit Profile</h3>
+            <div class="form-group">
+                <label for="height">Height (cm):</label>
+                <input type="text" class="form-control" id="height" name="height" value="{{ user_data["height"] }}">
+            </div>
+            <div class="form-group">
+                <label for="weight">Weight (kg):</label>
+                <input type="text" class="form-control" id="weight" name="weight" value="{{ user_data["weight"] }}">
+            </div>
+            <!-- Add more input fields for other profile information -->
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+
+        <div class="personal-records">
+            <h3>Personal Records</h3>
+            <form method="post" action="/update_records">
+                <div class="form-group">
+                    <label for="bench_press_pr">Bench Press PR:</label>
+                    <input type="text" class="form-control" id="bench_press_pr" name="bench_press_pr" value="{{ user_data["bench_press_pr"] }}">
+                </div>
+                <div class="form-group">
+                    <label for="squats_pr">Squats PR:</label>
+                    <input type="text" class="form-control" id="squats_pr" name="squats_pr" value="{{ user_data["squats_pr"] }}">
+                </div>
+                <div class="form-group">
+                    <label for="deadlifts_pr">Deadlifts PR:</label>
+                    <input type="text" class="form-control" id="deadlifts_pr" name="deadlifts_pr" value="{{ user_data["deadlifts_pr"] }}">
+                </div>
+                <!-- Add more input fields for other personal records -->
+                <div style="text-align: center;">
+                    <button type="submit" class="btn btn-primary">Update Records</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

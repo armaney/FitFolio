@@ -1,0 +1,143 @@
+
+
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block styles %}
+<style>
+#content {
+    padding-top: 50px;
+}
+</style>
+{% endblock %}
+
+
+
+{% block main %}
+<div id="content">
+
+    <h1>Calorie Intake Chart</h1>
+
+
+<!-- Form to input calories -->
+<form id="calorieForm" action="" method="post">
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="intake_date" required>
+    <label for="calories">Calories:</label>
+    <input type="number" id="calories" name="calories" required>
+
+
+    <input type="hidden" id="action" name="action">
+
+    <button type="button" id="addButton">Add Calorie Intake</button>
+    <button type="button" id="subtractButton">Subtract Calorie Intake</button>
+
+</form>
+
+
+<br>
+
+<!-- Chart canvas -->
+<canvas id="calorieChart" width="1400" height="600"></canvas>
+</div>
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('calorieChart').getContext('2d');
+    // Function to update the chart
+    function updateChart() {
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Calories Intake',
+                    borderColor: 'rgb(75, 192, 192)',
+                    data: calories,
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: true
+            }
+        });
+    }
+
+    // Process data from the server
+    const data = {{ calorie_data|tojson|safe }};
+    const dates = data.map(entry => entry.intake_date);
+    const calories = data.map(entry => entry.total_calories);
+
+    // Function to handle form submission using AJAX
+    document.getElementById('calorieForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const dateInput = document.getElementById('date');
+        const caloriesInput = document.getElementById('calories');
+
+        // Send data to server using AJAX
+        fetch("/submit_calorie", {
+            method: "POST",
+            body: new URLSearchParams({
+                intake_date: dateInput.value,
+                calories: caloriesInput.value
+            }),
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                // Update existing or add new entry in the data
+                const existingIndex = dates.indexOf(dateInput.value);
+                if (existingIndex !== -1) {
+                    calories[existingIndex] = Number(caloriesInput.value);
+                } else {
+                    dates.push(dateInput.value);
+                    calories.push(Number(caloriesInput.value));
+                }
+
+                // Sort the data by dates
+                const sortedIndices = dates.map((_, index) => index).sort((a, b) => new Date(dates[a]) - new Date(dates[b]));
+                dates.sort((a, b) => new Date(a) - new Date(b));
+                calories = sortedIndices.map(index => calories[index]);
+
+                // Update the chart
+                updateChart();
+
+                // Clear input fields
+                dateInput.value = '';
+                caloriesInput.value = '';
+            }
+        });
+    });
+
+
+    const actionInput = document.getElementById('action');
+
+    addButton.addEventListener('click', function () {
+        actionInput.value = "add";
+        document.getElementById("calorieForm").action = "/submit_calorie";
+        document.getElementById("calorieForm").submit();
+    });
+
+    subtractButton.addEventListener('click', function () {
+        actionInput.value = "subtract";
+        document.getElementById("calorieForm").action = "/subtract_calorie";
+        document.getElementById("calorieForm").submit();
+    });
+
+    // Initialize chart
+    updateChart();
+
+</script>
+
+
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+{% block styles %}
+<style>
+    /* Apply specific styles for the register page */
+    .form-control {
+        background-color: #222; /* Dark background color */
+        color: #fff; /* White text color */
+    }
+
+    /* Ensure that the selected option's text is visible */
+    select.form-control option {
+        color: #000; /* Change to the desired text color for selected option */
+    }
+
+</style>
+{% endblock %}
+
+{% block main %}
+
+<div class="custom-mt">
+    <div class="text-center">
+        <h1>Welcome to FitFolio</h1>
+        <p>Already a member? <a href="{{ url_for('login') }}" style="color: white;">Log In</a></p>
+    </div>
+    <form action="{{ url_for('register') }}" method="post">
+        <div class="mb-3">
+            <label for="username" class="form-label">User Name</label>
+            <input autocomplete="off" autofocus class="form-control" id="username" name="username" placeholder="Enter your Username" required type="text">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input class="form-control" id="password" name="password" placeholder="Enter Password" required type="password">
+        </div>
+        <div class="mb-3">
+            <label for="confirmation" class="form-label">Confirm Password</label>
+            <input class="form-control" id="confirmation" name="confirmation" placeholder="Confirm Password" required type="password">
+        </div>
+        <div class="mb-3">
+            <label for="age" class="form-label">Age</label>
+            <input type="number" min="0" max="120" id="age" name="age" placeholder="How old are you?" required class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="gender" class="form-label">Gender</label>
+            <select name="gender" class="form-control" required>
+                <option value="" disabled selected>Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="height" class="form-label">Height (cm)</label>
+            <input type="number" min="0" id="height" name="height" required placeholder="Enter your height in centimeters" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="weight" class="form-label">Weight (kg)</label>
+            <input type="number" min="0" id="weight" name="weight" required placeholder="Enter your weight in kilograms" class="form-control">
+        </div>
+        <button class="btn btn-primary" type="submit">Register</button>
+    </form>
+
+</div>
+<script>
+    // Check if the success query parameter is present in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const isSuccess = urlParams.get('success');
+
+    // If registration was successful, display the message and redirect after 3 seconds
+    if (isSuccess === "true") {
+        const successMessage = document.createElement("div");
+        successMessage.className = "alert alert-success";
+        successMessage.textContent = "Registration successful! You can now log in.";
+        document.body.insertBefore(successMessage, document.querySelector(".custom-mt"));
+
+        setTimeout(function () {
+            window.location.href = "/login"; // Redirect after 3 seconds
+        }, 3000);
+    }
+
+<script>
+    // Check if the success query parameter is present in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const isSuccess = urlParams.get('success');
+
+    // If registration was successful, display the message and redirect after 3 seconds
+    if (isSuccess === "true") {
+        const successMessage = document.createElement("div");
+        successMessage.className = "alert alert-success";
+        successMessage.textContent = "Registration successful! You can now log in.";
+        document.body.insertBefore(successMessage, document.querySelector(".custom-mt"));
+
+        setTimeout(function () {
+            window.location.href = "/login"; // Redirect after 3 seconds
+        }, 3000);
+    }
+</script>
+{% endblock %}
+

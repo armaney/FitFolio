@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}Science Based Workouts{% endblock %}
+
+{% block styles %}
+<style>
+    body {
+        background-color: #121212;
+        color: white;
+        font-family: 'MuseoModerno', sans-serif;
+        padding-top: 80px;
+    }
+
+    .youtube-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 70vh;
+    }
+
+    .youtube-player {
+        width: 80%;
+        height: 60vh;
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<header class="mb-5">
+    <h1 class="display-4">SCIENCE BASED WORKOUTS</h1>
+</header>
+<div class="youtube-container">
+    <iframe class="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PLFBizIyYw93cVFuGOvHH-66LR5BaH3V1e" frameborder="0" allowfullscreen></iframe>
+</div>
+{% endblock %}
