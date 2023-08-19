@@ -1,0 +1,88 @@
+/* Load the MuseoModerno font */
+@import url('https://fonts.googleapis.com/css2?family=MuseoModerno&display=swap');
+
+/* Size for brand */
+nav .navbar-brand {
+    font-size: xxx-large;
+    font-family: 'MuseoModerno', cursive;
+}
+
+nav .offcanvas-header .offcanvas-title{
+    font-size: xxx-large;
+    font-family: 'MuseoModerno', cursive;
+}
+/* Increase the size of navbar items */
+nav .navbar-nav .nav-link {
+    font-size: xx-large;
+    font-family: 'MuseoModerno', cursive;
+}
+
+
+/* Dark mode text color for branding */
+.dark-mode-text {
+    color: #fff;
+}
+
+/* Dark mode background for the whole page */
+
+
+/* Dark mode styles */
+nav.navbar {
+    background-color: #222; /* Change this to the desired background color */
+}
+
+.dark-mode {
+    background-color: #222;
+    color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode input.form-control {
+    background-color: #333;
+    color: #fff;
+    border-color: #666;
+}
+
+.dark-mode button.btn-primary {
+    background-color: #2e944b;
+    border-color: #2e944b;
+}
+
+.custom-mt {
+    margin-top: 70px; /* You can adjust this value as needed */
+}
+
+/* Adjust the width of the form input boxes */
+.form-control {
+    width: 40%; /* Adjust the width as needed */
+    height: 50px;
+    margin: auto;
+}
+
+html, body {
+    background-color: #000;
+    color: #fff; /* Change this to the desired text color for dark mode */
+}
+/* Set background and text colors for form input boxes */
+.form-control {
+    background-color: #fff; /* Dark background color */
+    color: white; /* White text color */
+}
+
+
+/* Dark mode styles for form controls */
+.dark-mode input.form-control {
+    background-color: #333;
+    color: #fff;
+    border-color: black;
+}
+
+/* Dark mode styles for buttons */
+.dark-mode button.btn-primary {
+    background-color: #2e944b;
+    border-color: #2e944b;
+}
+
+
